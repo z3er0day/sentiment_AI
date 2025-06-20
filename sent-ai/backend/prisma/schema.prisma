@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  worker
+  tsar
+}
+
+model Review {
+  id             Int      @id @default(autoincrement())
+  date           DateTime // Дата отзыва
+  collectionTime DateTime // Время сбора отзыва
+  rating         Float    // Оценка (может быть дробной)
+  text           String   // Текст отзыва
+  userId         Int      // ID пользователя, который загрузил отзыв
+  user           User     @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  processedReview ProcessedReview?
+
+  @@index([userId])
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  fullName     String
+  organization String
+  role         UserRole @default(worker)
+  reviews      Review[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ProcessedReview {
+  id                 Int      @id @default(autoincrement())
+  reviewId           Int      @unique
+  review             Review   @relation(fields: [reviewId], references: [id])
+  // Копия полей из Review
+  text               String
+  rating             Float
+  date               DateTime
+  collectionTime     DateTime
+  userId             Int
+  // Аналитика
+  theme              String?
+  sentiment          String?
+  category           String?
+  priority           String?
+  competitorMention  String?
+  tags               String?  // Можно хранить как строку через запятую или json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model AIRecommendation {
+  id         Int      @id @default(autoincrement())
+  category   String
+  theme      String?
+  text       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([category, theme], name: "ai_category_theme")
+}
+
+model CompetitorRecommendation {
+  id         Int      @id @default(autoincrement())
+  category   String
+  theme      String?
+  text       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([category, theme], name: "competitor_category_theme")
+}

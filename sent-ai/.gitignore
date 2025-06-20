@@ -1,0 +1,115 @@
+# --- Universal additions ---
+
+# Lock files (если не хотите коммитить)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Test output
+junit.xml
+test-results/
+.nyc_output/
+coverage/
+coverage-final.json
+
+# CI/CD
+.github/
+.gitlab/
+
+# Editor swap/backup files
+*~
+*.swp
+*.swo
+*.orig
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# SFTP/FTP
+.sftpConfig
+.ftpconfig
+
+# JetBrains IDE
+*.iml
+.idea/
+
+# VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Node.js/TypeScript
+node_modules/
+.pnp/
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.yarn-integrity
+
+# Build output
+build/
+dist/
+out/
+
+# Environment files (API keys, secrets, etc.)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# HuggingFace/DB API keys (if stored separately)
+huggingface.key
+huggingface.secret
+hf_api_key.txt
+db_api_key.txt
+db.secret
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite
+*.local
+
+# Logs
+logs/
+*.log
+
+# Misc
+*.pem
+.vercel/
+.turbo/
+
+# Prisma
+prisma/migrations/*
+!prisma/migrations/migration_lock.toml
+prisma/*.db
+
+# Ignore uploads and parsed data (если есть такие папки)
+uploads/
+parsed/
+parser/
+
+# Ignore system/license/readme files (если не хотите коммитить)
+LICENSE
+README.md
+README.txt
