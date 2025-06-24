@@ -111,5 +111,4 @@ parser/
 
 # Ignore system/license/readme files (если не хотите коммитить)
 LICENSE
-README.md
 README.txt
