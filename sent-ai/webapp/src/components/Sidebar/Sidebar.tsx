@@ -54,7 +54,7 @@ export function Sidebar({ isOpen, onClose, user }: SidebarProps) {
               }`}
               onClick={onClose}
             >
-              Личный кабинет
+              Главная страница
             </Link>
 
             {/* Reviews Upload - visible only to tsar */}

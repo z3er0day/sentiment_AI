@@ -22,9 +22,11 @@ export function RegistrationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-black">Регистрация</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg w-full max-w-md shadow-lg border border-blue-100">
+        <h2 className="text-2xl font-bold mb-6 text-blue-700 text-center">
+          Регистрация
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -38,7 +40,7 @@ export function RegistrationModal({
               id="fullName"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
               required
             />
           </div>
@@ -54,7 +56,7 @@ export function RegistrationModal({
               id="organization"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+              className="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
               required
             />
           </div>
@@ -62,13 +64,13 @@ export function RegistrationModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors duration-200"
             >
               Отмена
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-green-400 text-white rounded-md hover:from-blue-700 hover:to-green-600 shadow transition-colors duration-200"
             >
               Зарегистрироваться
             </button>

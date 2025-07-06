@@ -22,6 +22,16 @@ interface TopCategory {
   count: number;
 }
 
+interface ProcessedReviewRow {
+  id: number;
+  text: string;
+  rating: number;
+  priority: string | null;
+  category: string | null;
+  aiRecommendation: string | null;
+  status: string | null;
+}
+
 const PRIORITY_ORDER = ["Очень важный", "Важный", "Обычный "];
 
 const AIrecommendations: React.FC = () => {
@@ -46,6 +56,12 @@ const AIrecommendations: React.FC = () => {
   const [loadingAll, setLoadingAll] = useState(false);
   const [errorAll, setErrorAll] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [processedReviews, setProcessedReviews] = useState<
+    ProcessedReviewRow[]
+  >([]);
+  const [loadingProcessed, setLoadingProcessed] = useState(false);
+  const [errorProcessed, setErrorProcessed] = useState<string | null>(null);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -169,11 +185,47 @@ const AIrecommendations: React.FC = () => {
       } catch {}
     };
 
+    // Получение обработанных отзывов для таблицы рекомендаций
+    const fetchProcessed = async () => {
+      setLoadingProcessed(true);
+      setErrorProcessed(null);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const res = await fetch("http://localhost:3000/api/reviews/processed", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Преобразуем данные для таблицы
+          const rows: ProcessedReviewRow[] = (data.reviews || []).map(
+            (r: any) => ({
+              id: r.id,
+              text: r.text,
+              rating: r.rating,
+              priority: r.priority,
+              category: r.category,
+              aiRecommendation: r.aiRecommendation || null, // если есть поле
+              status: r.status || null, // если есть поле
+            })
+          );
+          setProcessedReviews(rows);
+        } else {
+          setErrorProcessed("Ошибка загрузки обработанных отзывов");
+        }
+      } catch (e) {
+        setErrorProcessed("Ошибка загрузки обработанных отзывов");
+      } finally {
+        setLoadingProcessed(false);
+      }
+    };
+
     fetchUserData();
     fetchReviewStats();
     fetchTopCategories();
     fetchTemplates();
     fetchAIRecommendations();
+    fetchProcessed();
   }, [navigate]);
 
   // Сортировка и фильтрация топа
@@ -257,6 +309,59 @@ const AIrecommendations: React.FC = () => {
   // Показываем либо 5, либо все строки
   const visibleTemplates: { category: string; theme: string; count: number }[] =
     expanded ? groupedTemplates : groupedTemplates.slice(0, 5);
+
+  // Возможные статусы и подписи
+  const STATUS_CYCLE = [
+    {
+      value: "not_resolved",
+      label: "Не решено",
+      color: "bg-red-100 text-red-700 border-red-300",
+    },
+    {
+      value: "in_progress",
+      label: "В работе",
+      color: "bg-yellow-100 text-yellow-700 border-yellow-300",
+    },
+    {
+      value: "resolved",
+      label: "Решено",
+      color: "bg-green-100 text-green-700 border-green-300",
+    },
+  ];
+
+  // Функция для смены статуса по кругу
+  const handleStatusCycle = async (
+    id: number,
+    currentStatus: string | null
+  ) => {
+    const idx = STATUS_CYCLE.findIndex((s) => s.value === currentStatus);
+    const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const res = await fetch(
+        `http://localhost:3000/api/reviews/processed/${id}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: next.value }),
+        }
+      );
+      if (res.ok) {
+        setProcessedReviews((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, status: next.value } : r))
+        );
+      }
+    } catch {}
+  };
+
+  // В таблице показываем только первые 5 отзывов, если не раскрыто
+  const visibleReviews: ProcessedReviewRow[] = showAllReviews
+    ? processedReviews
+    : processedReviews.slice(0, 5);
 
   return (
     <div className="min-h-screen bg-white">
@@ -565,6 +670,110 @@ const AIrecommendations: React.FC = () => {
               )}
             </div>
           </div>
+        </div>
+        {/* Таблица обработанных отзывов с рекомендациями ИИ */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4 text-blue-700">
+            Обработанные отзывы и AI рекомендации
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    ID
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    Текст
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    Оценка
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    Приоритет
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    Категория
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    AI рекомендация
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                    Статус
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {loadingProcessed ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-4">
+                      Загрузка...
+                    </td>
+                  </tr>
+                ) : errorProcessed ? (
+                  <tr>
+                    <td colSpan={7} className="text-center text-red-500 py-4">
+                      {errorProcessed}
+                    </td>
+                  </tr>
+                ) : processedReviews.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center text-gray-400 py-4">
+                      Нет данных
+                    </td>
+                  </tr>
+                ) : (
+                  visibleReviews.map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-2">{r.id}</td>
+                      <td className="px-4 py-2">
+                        {r.text.split(" ").slice(0, 5).join(" ")}...
+                      </td>
+                      <td className="px-4 py-2">{r.rating}</td>
+                      <td className="px-4 py-2">{r.priority || "—"}</td>
+                      <td className="px-4 py-2">{r.category || "—"}</td>
+                      <td className="px-4 py-2">
+                        {r.aiRecommendation || (
+                          <span className="text-gray-400 italic">(нет)</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2">
+                        {(() => {
+                          // Для корректного цикла: если статус null или невалидный, начинаем с первого
+                          const idx = STATUS_CYCLE.findIndex(
+                            (s) => s.value === r.status
+                          );
+                          const statusObj =
+                            idx === -1 ? STATUS_CYCLE[0] : STATUS_CYCLE[idx];
+                          return (
+                            <button
+                              className={`px-3 py-1 rounded text-xs font-semibold border transition-colors ${statusObj.color}`}
+                              onClick={() =>
+                                handleStatusCycle(r.id, statusObj.value)
+                              }
+                              type="button"
+                            >
+                              {statusObj.label}
+                            </button>
+                          );
+                        })()}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {processedReviews.length > 5 && (
+            <div className="flex justify-end mt-2">
+              <button
+                className="text-blue-600 hover:underline text-sm"
+                onClick={() => setShowAllReviews((v) => !v)}
+              >
+                {showAllReviews ? "Скрыть" : "Показать все"}
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>

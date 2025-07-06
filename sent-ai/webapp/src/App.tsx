@@ -87,36 +87,80 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-black">sentiment-ai</h1>
-          <div className="space-x-4">
-            <button
-              onClick={() => setIsLoginOpen(true)}
-              className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors duration-200"
-            >
-              Войти
-            </button>
-            <button
-              onClick={() => setIsRegistrationOpen(true)}
-              className="px-4 py-2 border border-black text-black hover:bg-black hover:text-white transition-colors duration-200"
-            >
-              Регистрация
-            </button>
-          </div>
+      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow flex items-center justify-between py-4 px-6 z-30">
+        <h1 className="text-2xl font-bold text-blue-700">sentiment-ai</h1>
+        <div className="space-x-4">
+          <button
+            onClick={() => setIsLoginOpen(true)}
+            className="px-4 py-2 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded transition-colors duration-200"
+          >
+            Войти
+          </button>
+          <button
+            onClick={() => setIsRegistrationOpen(true)}
+            className="px-4 py-2 border border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white rounded transition-colors duration-200"
+          >
+            Регистрация
+          </button>
         </div>
       </header>
 
-      <main className="pt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-4xl font-bold text-black mb-4">
-              Анализ отзывов
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Используйте силу искусственного интеллекта для анализа отзывов
-              компании
+      <main className="pt-32 container mx-auto px-4">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-bold text-blue-700 mb-4 drop-shadow">
+            Анализ отзывов
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Используйте силу искусственного интеллекта для анализа отзывов
+            компании
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="bg-gradient-to-r from-blue-200 to-green-200 rounded-lg shadow p-6 flex flex-col items-center">
+            <h3 className="text-xl font-bold text-blue-700 mb-2">
+              Быстрый старт
+            </h3>
+            <p className="text-gray-700 text-center">
+              Зарегистрируйтесь и загрузите отзывы — получите аналитику за
+              минуты.
             </p>
+          </div>
+          <div className="bg-gradient-to-r from-blue-200 to-green-200 rounded-lg shadow p-6 flex flex-col items-center">
+            <h3 className="text-xl font-bold text-blue-700 mb-2">AI-анализ</h3>
+            <p className="text-gray-700 text-center">
+              Современные модели выявляют тональность, проблемы и сильные
+              стороны компании.
+            </p>
+          </div>
+          <div className="bg-gradient-to-r from-blue-200 to-green-200 rounded-lg shadow p-6 flex flex-col items-center">
+            <h3 className="text-xl font-bold text-blue-700 mb-2">
+              Визуализация
+            </h3>
+            <p className="text-gray-700 text-center">
+              Наглядные графики и рекомендации для принятия решений.
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h4 className="text-lg font-bold text-blue-700 mb-2">
+              Наши преимущества
+            </h4>
+            <ul className="list-disc pl-5 text-gray-700">
+              <li>Высокая точность анализа</li>
+              <li>Интуитивный интерфейс</li>
+              <li>Безопасность данных</li>
+            </ul>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h4 className="text-lg font-bold text-blue-700 mb-2">
+              Что вы получите
+            </h4>
+            <ul className="list-disc pl-5 text-gray-700">
+              <li>Детальную аналитику отзывов</li>
+              <li>Рекомендации по улучшению</li>
+              <li>Сравнение с конкурентами</li>
+            </ul>
           </div>
         </div>
       </main>

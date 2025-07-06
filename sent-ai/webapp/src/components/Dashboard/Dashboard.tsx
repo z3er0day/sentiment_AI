@@ -44,6 +44,7 @@ export function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [reviews, setReviews] = useState<ProcessedReview[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [isChartExpanded, setIsChartExpanded] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -121,14 +122,6 @@ export function Dashboard() {
       reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
     );
   }, [reviews]);
-  const ratingDistribution = useMemo(() => {
-    const dist = [0, 0, 0, 0, 0];
-    reviews.forEach((r) => {
-      if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1]++;
-    });
-    return dist;
-  }, [reviews]);
-
   // Динамика тональности по датам (по дням)
   const sentimentTimeline = useMemo(() => {
     // {date: {positive: n, negative: n, neutral: n}}
@@ -153,6 +146,13 @@ export function Dashboard() {
       neutral: dates.map((d) => map[d].neutral),
       negative: dates.map((d) => map[d].negative),
     };
+  }, [reviews]);
+  const ratingDistribution = useMemo(() => {
+    const dist = [0, 0, 0, 0, 0];
+    reviews.forEach((r) => {
+      if (r.rating >= 1 && r.rating <= 5) dist[r.rating - 1]++;
+    });
+    return dist;
   }, [reviews]);
 
   if (loading || reviewsLoading) {
@@ -224,148 +224,135 @@ export function Dashboard() {
         </button>
       </header>
 
-      <main className="container mx-auto pt-24 px-4">
-        <h1 className="text-3xl font-bold text-blue-700 mb-6">
-          Анализ отзывов
-        </h1>
+      <main className="container mx-auto pt-8 px-4">
+        {" "}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="metric-value text-2xl font-bold mb-2">
-            {totalReviews} отзывов
+            Всего отзывов: {totalReviews}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 metrics-grid">
-            <div className="metric-card p-4 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200">
-              <div className="metric-header text-gray-500">Личный кабинет</div>
-              <div className="metric-value text-blue-700 text-xl">91%</div>
-              <div className="metric-change positive flex items-center text-green-600">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#4CAF50">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-2 metrics-grid items-stretch">
+            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
+              <div className="metric-header text-gray-500 text-xs">
+                Личный кабинет
+              </div>
+              <div className="metric-value text-blue-700 text-base font-bold">
+                91%
+              </div>
+              <div className="metric-change positive flex items-center text-green-600 text-xs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                172 отзыва
+                <span className="ml-1">172</span>
               </div>
             </div>
-            <div className="metric-card p-4 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200">
-              <div className="metric-header text-gray-500">Карта</div>
-              <div className="metric-value text-blue-700 text-xl">83%</div>
-              <div className="metric-change positive flex items-center text-green-600">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#4CAF50">
+            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
+              <div className="metric-header text-gray-500 text-xs">Карта</div>
+              <div className="metric-value text-blue-700 text-base font-bold">
+                83%
+              </div>
+              <div className="metric-change positive flex items-center text-green-600 text-xs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                124 отзыва
+                <span className="ml-1">124</span>
               </div>
             </div>
-            <div className="metric-card p-4 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200">
-              <div className="metric-header text-gray-500">Обслуживание</div>
-              <div className="metric-value text-blue-700 text-xl">62%</div>
-              <div className="metric-change positive flex items-center text-green-600">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#4CAF50">
+            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
+              <div className="metric-header text-gray-500 text-xs">
+                Обслуживание
+              </div>
+              <div className="metric-value text-blue-700 text-base font-bold">
+                62%
+              </div>
+              <div className="metric-change positive flex items-center text-green-600 text-xs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                97 отзывов
+                <span className="ml-1">97</span>
               </div>
             </div>
-            <div className="metric-card p-4 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200">
-              <div className="metric-header text-gray-500">Надёжность</div>
-              <div className="metric-value text-blue-700 text-xl">56%</div>
-              <div className="metric-change positive flex items-center text-green-600">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="#4CAF50">
+            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
+              <div className="metric-header text-gray-500 text-xs">
+                Надёжность
+              </div>
+              <div className="metric-value text-blue-700 text-base font-bold">
+                56%
+              </div>
+              <div className="metric-change positive flex items-center text-green-600 text-xs">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                88 отзыва
+                <span className="ml-1">88</span>
+              </div>
+            </div>
+            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-row items-center justify-between min-h-[40px] w-full">
+              {/* Левая часть: оценка из 5 */}
+              <div className="flex flex-col items-center justify-center min-w-[40px]">
+                <div className="text-2xl font-bold mb-1">
+                  {averageRating.toFixed(1)}
+                </div>
+                <div className="text-xs text-gray-500">из 5</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {totalReviews} оценок
+                </div>
+              </div>
+              <div className="flex flex-col ml-2">
+                {[5, 4, 3, 2, 1].map((star) => (
+                  <div key={star} className="flex items-center">
+                    <span className="text-yellow-400">
+                      {Array.from({ length: star }).map((_, i) => (
+                        <svg
+                          key={i}
+                          width="10"
+                          height="10"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="inline-block align-middle"
+                        >
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+                      ))}
+                    </span>
+                    <span className="text-xs text-gray-700 ml-1">
+                      {ratingDistribution[star - 1]}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dashboard">
-          <div className="card rating-card bg-gradient-to-r from-blue-200 to-green-200 text-center p-6 rounded-lg shadow">
-            <h2 className="text-xl font-bold text-blue-700 mb-2">
-              Общий рейтинг
-            </h2>
-            <div className="rating-number text-5xl font-bold">
-              {averageRating.toFixed(1)}
+        {/* Новый layout: 3 колонки, но с col-span для ширины */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-2">
+          {/* Карточка с преимуществами и улучшениями - col-span-2 */}
+          <div className="card p-0 rounded-lg shadow flex flex-row md:col-span-2 min-w-[320px] max-w-full bg-white overflow-hidden">
+            {/* Левая часть: Что можно улучшить */}
+            <div className="flex-1 min-w-[160px] p-4 flex flex-col">
+              <h3 className="text-base font-bold text-blue-700 mb-2">
+                Что можно улучшить
+              </h3>
+              <ul className="list-disc pl-4 text-xs">
+                <li>Прозрачность цен (20%)</li>
+                <li>Качество некоторых услуг (40%)</li>
+                <li>Снижение скрытых комиссий</li>
+              </ul>
             </div>
-            <div
-              className="stars text-yellow-400 text-2xl"
-              aria-label={`Рейтинг: ${averageRating.toFixed(1)} из 5`}
-            >
-              {Array.from({ length: 5 }).map((_, i) => {
-                const rounded = Math.round(averageRating * 2) / 2;
-                if (i + 1 <= Math.floor(rounded)) {
-                  // Полная звезда
-                  return (
-                    <span key={i}>
-                      <svg
-                        width="28"
-                        height="28"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="inline-block align-middle"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    </span>
-                  );
-                } else if (rounded - i === 0.5) {
-                  // Полузвезда
-                  return (
-                    <span key={i}>
-                      <svg
-                        width="28"
-                        height="28"
-                        viewBox="0 0 24 24"
-                        className="inline-block align-middle"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`half-star-${i}`}
-                            x1="0"
-                            x2="1"
-                            y1="0"
-                            y2="0"
-                          >
-                            <stop offset="50%" stopColor="currentColor" />
-                            <stop offset="50%" stopColor="transparent" />
-                          </linearGradient>
-                        </defs>
-                        <path
-                          d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                          fill={`url(#half-star-${i})`}
-                          stroke="currentColor"
-                          strokeWidth="1"
-                        />
-                      </svg>
-                    </span>
-                  );
-                } else {
-                  // Пустая звезда
-                  return (
-                    <span key={i}>
-                      <svg
-                        width="28"
-                        height="28"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        className="inline-block align-middle"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    </span>
-                  );
-                }
-              })}
-            </div>
-            <div>из 5</div>
-            <div>{totalReviews} оценок</div>
-            <div className="rating-distribution flex flex-col gap-1 mt-4">
-              <div className="rating-row">★★★★★ {ratingDistribution[4]}</div>
-              <div className="rating-row">★★★★ {ratingDistribution[3]}</div>
-              <div className="rating-row">★★★ {ratingDistribution[2]}</div>
-              <div className="rating-row">★★ {ratingDistribution[1]}</div>
-              <div className="rating-row">★ {ratingDistribution[0]}</div>
+            {/* Вертикальный разделитель */}
+            <div className="w-px bg-gray-200 mx-2 hidden md:block" />
+            {/* Правая часть: Наши преимущества */}
+            <div className="flex-1 min-w-[160px] p-4 flex flex-col">
+              <h3 className="text-base font-bold text-blue-700 mb-2">
+                Наши преимущества
+              </h3>
+              <ul className="list-disc pl-4 text-xs">
+                <li>Высокий рейтинг сервиса (90%)</li>
+                <li>Широкое разнообразие услуг (90%)</li>
+                <li>Доступность в большинстве регионов (76%)</li>
+              </ul>
             </div>
           </div>
-          <div className="card stats-card p-6 rounded-lg shadow">
+          {/* Динамика тональности — col-span-2, справа от карточки */}
+          <div className="card stats-card p-6 rounded-lg shadow relative md:col-span-2">
             <h2 className="text-xl font-bold text-blue-700 mb-2">
               Динамика тональности
             </h2>
@@ -433,7 +420,7 @@ export function Dashboard() {
             <button
               className="toggle-btn bg-green-200 px-4 py-2 rounded flex items-center mx-auto mt-2"
               id="expandChart"
-              // onClick={...} // (optional: implement fullscreen logic if needed)
+              onClick={() => setIsChartExpanded(true)}
             >
               <span>Развернуть график</span>
               <svg
@@ -449,12 +436,90 @@ export function Dashboard() {
                 <path d="M15 3h6v6M14 10l7-7M3 9V3h6M4 14l7 7"></path>
               </svg>
             </button>
+            {/* Expanded Chart Modal */}
+            {isChartExpanded && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+                <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl relative flex flex-col">
+                  <button
+                    className="absolute top-4 right-4 px-3 py-1 bg-blue-700 text-white rounded hover:bg-blue-900 transition-colors"
+                    onClick={() => setIsChartExpanded(false)}
+                  >
+                    Свернуть
+                  </button>
+                  <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">
+                    Динамика тональности
+                  </h2>
+                  <div className="h-[60vh] w-full">
+                    <Line
+                      data={{
+                        labels: sentimentTimeline.labels,
+                        datasets: [
+                          {
+                            label: "Позитивные",
+                            data: sentimentTimeline.positive,
+                            borderColor: "#34d399",
+                            backgroundColor: "rgba(52,211,153,0.2)",
+                            fill: true,
+                            tension: 0.4,
+                          },
+                          {
+                            label: "Нейтральные",
+                            data: sentimentTimeline.neutral,
+                            borderColor: "#60a5fa",
+                            backgroundColor: "rgba(96,165,250,0.2)",
+                            fill: true,
+                            tension: 0.4,
+                          },
+                          {
+                            label: "Негативные",
+                            data: sentimentTimeline.negative,
+                            borderColor: "#f87171",
+                            backgroundColor: "rgba(248,113,113,0.2)",
+                            fill: true,
+                            tension: 0.4,
+                          },
+                        ],
+                      }}
+                      options={{
+                        responsive: true,
+                        plugins: {
+                          legend: { display: true, position: "top" },
+                          tooltip: { enabled: true },
+                        },
+                        scales: {
+                          x: { title: { display: true, text: "Дата" } },
+                          y: {
+                            title: { display: true, text: "Количество" },
+                            beginAtZero: true,
+                          },
+                        },
+                        maintainAspectRatio: false,
+                      }}
+                      height={400}
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 mt-2 text-center">
+                    {sentimentTimeline.labels.length > 0 && (
+                      <span>
+                        Период: {sentimentTimeline.labels[0]} —{" "}
+                        {
+                          sentimentTimeline.labels[
+                            sentimentTimeline.labels.length - 1
+                          ]
+                        }
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="card comparison-card col-span-2 p-6 rounded-lg shadow mt-6">
-            <h2 className="text-xl font-bold text-blue-700 mb-2">
+          {/* Сравнительный анализ конкурентов - col-span-4, ниже */}
+          <div className="card comparison-card p-4 rounded-lg shadow flex flex-col justify-between md:col-span-4">
+            <h2 className="text-lg font-bold text-blue-700 mb-2">
               Сравнительный анализ аспектов в отзывах у конкурентов
             </h2>
-            <table className="w-full mt-4 border-collapse">
+            <table className="w-full mt-2 border-collapse text-xs items-center">
               <thead>
                 <tr>
                   <th className="bg-blue-200 text-blue-700">Оценка</th>
@@ -466,85 +531,32 @@ export function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Конкурент 1</td>
-                  <td>20%</td>
-                  <td>40%</td>
-                  <td>90%</td>
-                  <td>76%</td>
-                  <td>90%</td>
-                </tr>
-                <tr>
-                  <td>Конкурент 2</td>
-                  <td>13%</td>
-                  <td>38%</td>
-                  <td>10%</td>
-                  <td>55%</td>
-                  <td>83%</td>
-                </tr>
-                <tr>
-                  <td>Конкурент 3</td>
-                  <td>90%</td>
-                  <td>34%</td>
-                  <td>90%</td>
-                  <td>76%</td>
-                  <td>97%</td>
-                </tr>
+                  <tr> 
+                    <td>Конкурент 1</td>
+                    <td className="flex flex-col items-center min-h-[40px] w-full justify-center">20%</td>
+                      <td>40%</td>
+                      <td>90%</td>
+                      <td>76%</td>
+                      <td>90%</td>
+                  </tr>
+                  <tr>
+                    <td>Конкурент 2</td>
+                    <td>13%</td>
+                    <td>38%</td>
+                    <td>10%</td>
+                    <td>55%</td>
+                    <td>83%</td>
+                  </tr>
+                  <tr>
+                    <td>Конкурент 3</td>
+                    <td>90%</td>
+                    <td>34%</td>
+                    <td>90%</td>
+                    <td>76%</td>
+                    <td>97%</td>
+                  </tr>
               </tbody>
             </table>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 improvement-section mt-6">
-          <div className="card p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold text-blue-700 mb-2">
-              Наши преимущества
-            </h3>
-            <ul className="list-disc pl-5">
-              <li>Высокий рейтинг сервиса (90%)</li>
-              <li>Широкое разнообразие услуг (90%)</li>
-              <li>Доступность в большинстве регионов (76%)</li>
-            </ul>
-          </div>
-          <div className="card p-6 rounded-lg shadow">
-            <h3 className="text-lg font-bold text-blue-700 mb-2">
-              Что можно улучшить
-            </h3>
-            <ul className="list-disc pl-5">
-              <li>Прозрачность цен (20%)</li>
-              <li>Качество некоторых услуг (40%)</li>
-              <li>Снижение скрытых комиссий</li>
-            </ul>
-          </div>
-        </div>
-        <div className="card p-6 rounded-lg shadow mt-6">
-          <h2 className="text-xl font-bold text-blue-700 mb-2">
-            Рекомендации ИИ
-          </h2>
-          <p>На основе анализа 248 отзывов (↑12% за неделю)</p>
-          <p className="negative text-red-600">
-            Негативные: 23% (↓2% за неделю)
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <div>
-              <h4 className="font-bold mb-2">Топ-5 плюсов компании</h4>
-              <ul className="list-disc pl-5">
-                <li>Удобный интерфейс (42%)</li>
-                <li>Быстрое обслуживание (38%)</li>
-                <li>Доступность сервиса (36%)</li>
-                <li>Качество продуктов (28%)</li>
-                <li>Разнообразие услуг (26%)</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-2">Топ-5 проблем</h4>
-              <ul className="list-disc pl-5">
-                <li>Скрытые комиссии (23%)</li>
-                <li>Блокировка счетов (18%)</li>
-                <li>Проблемы с поддержкой (15%)</li>
-                <li>Долгое оформление (12%)</li>
-                <li>Ограничения по оплате (10%)</li>
-              </ul>
-            </div>
           </div>
         </div>
       </main>
