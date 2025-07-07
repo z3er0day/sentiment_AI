@@ -125,6 +125,19 @@ export function Sidebar({ isOpen, onClose, user }: SidebarProps) {
                 Обработанные отзывы
               </Link>
             )}
+
+            {/* Counter Page - visible to all users */}
+            <Link
+              to="/counters"
+              className={`block py-2 px-4 rounded-lg mb-2 ${
+                location.pathname === "/counters"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-600 hover:bg-blue-50"
+              }`}
+              onClick={onClose}
+            >
+              Счетчики
+            </Link>
           </nav>
         </div>
       </div>

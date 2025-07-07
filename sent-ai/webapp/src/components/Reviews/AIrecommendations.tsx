@@ -62,6 +62,10 @@ const AIrecommendations: React.FC = () => {
   const [loadingProcessed, setLoadingProcessed] = useState(false);
   const [errorProcessed, setErrorProcessed] = useState<string | null>(null);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof ProcessedReviewRow;
+    direction: "asc" | "desc";
+  } | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -358,10 +362,47 @@ const AIrecommendations: React.FC = () => {
     } catch {}
   };
 
-  // В таблице показываем только первые 5 отзывов, если не раскрыто
+  // Функция для сортировки
+  const sortedProcessedReviews = React.useMemo(() => {
+    if (!sortConfig) return processedReviews;
+    const sorted = [...processedReviews];
+    sorted.sort((a, b) => {
+      const { key, direction } = sortConfig;
+      let aValue = a[key];
+      let bValue = b[key];
+      // Для числовых значений
+      if (key === "id" || key === "rating") {
+        aValue = aValue ?? 0;
+        bValue = bValue ?? 0;
+        return direction === "asc"
+          ? (aValue as number) - (bValue as number)
+          : (bValue as number) - (aValue as number);
+      }
+      // Для строковых значений
+      aValue = (aValue ?? "").toString().toLowerCase();
+      bValue = (bValue ?? "").toString().toLowerCase();
+      if (aValue < bValue) return direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [processedReviews, sortConfig]);
+
+  // Обновляем visibleReviews для сортировки
   const visibleReviews: ProcessedReviewRow[] = showAllReviews
-    ? processedReviews
-    : processedReviews.slice(0, 5);
+    ? sortedProcessedReviews
+    : sortedProcessedReviews.slice(0, 5);
+
+  // Функция для обработки клика по заголовку
+  const handleSort = (key: keyof ProcessedReviewRow) => {
+    setSortConfig((prev) => {
+      if (prev && prev.key === key) {
+        // Меняем направление
+        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      return { key, direction: "asc" };
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -680,20 +721,45 @@ const AIrecommendations: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    ID
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                    onClick={() => handleSort("id")}
+                  >
+                    ID{" "}
+                    {sortConfig?.key === "id" &&
+                      (sortConfig.direction === "asc" ? "▲" : "▼")}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    Текст
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                    onClick={() => handleSort("text")}
+                  >
+                    Текст{" "}
+                    {sortConfig?.key === "text" &&
+                      (sortConfig.direction === "asc" ? "▲" : "▼")}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    Оценка
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                    onClick={() => handleSort("rating")}
+                  >
+                    Оценка{" "}
+                    {sortConfig?.key === "rating" &&
+                      (sortConfig.direction === "asc" ? "▲" : "▼")}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    Приоритет
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                    onClick={() => handleSort("priority")}
+                  >
+                    Приоритет{" "}
+                    {sortConfig?.key === "priority" &&
+                      (sortConfig.direction === "asc" ? "▲" : "▼")}
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    Категория
+                  <th
+                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer"
+                    onClick={() => handleSort("category")}
+                  >
+                    Категория{" "}
+                    {sortConfig?.key === "category" &&
+                      (sortConfig.direction === "asc" ? "▲" : "▼")}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     AI рекомендация

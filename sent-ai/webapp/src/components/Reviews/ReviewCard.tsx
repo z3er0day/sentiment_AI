@@ -29,6 +29,8 @@ const ReviewCard = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [searchId, setSearchId] = useState("");
+  const [highlightedId, setHighlightedId] = useState<number | null>(null);
 
   // --- Фильтрация ---
   const [filter, setFilter] = useState({
@@ -165,7 +167,7 @@ const ReviewCard = () => {
     return Array.from(tags);
   }, [reviews]);
   const filteredReviews = useMemo(() => {
-    return reviews.filter((r) => {
+    let filtered = reviews.filter((r) => {
       if (filter.priority && r.priority !== filter.priority) return false;
       if (filter.rating && r.rating !== Number(filter.rating)) return false;
       if (filter.dateFrom && new Date(r.date) < new Date(filter.dateFrom))
@@ -183,7 +185,16 @@ const ReviewCard = () => {
       if (filter.tag && !(r.tags || []).includes(filter.tag)) return false;
       return true;
     });
-  }, [reviews, filter]);
+    // Если есть поиск по ID и найденный отзыв, перемещаем его наверх
+    if (highlightedId) {
+      const idx = filtered.findIndex((r) => r.id === highlightedId);
+      if (idx > 0) {
+        const [found] = filtered.splice(idx, 1);
+        filtered.unshift(found);
+      }
+    }
+    return filtered;
+  }, [reviews, filter, highlightedId]);
 
   // Эффект для загрузки пользовательских данных
   useEffect(() => {
@@ -296,6 +307,40 @@ const ReviewCard = () => {
           </button>
           <h1 className="text-2xl font-bold text-blue-700">Все отзывы</h1>
         </div>
+        {/* Поиск по ID */}
+        <div className="flex items-center gap-2 ml-4">
+          <input
+            type="number"
+            min="1"
+            placeholder="Поиск по ID отзыва..."
+            value={searchId}
+            onChange={(e) => setSearchId(e.target.value)}
+            className="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            style={{ width: 180 }}
+          />
+          <button
+            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => {
+              const id = Number(searchId);
+              if (!id) return setHighlightedId(null);
+              const found = reviews.find((r) => r.id === id);
+              setHighlightedId(found ? id : null);
+            }}
+          >
+            Найти
+          </button>
+          {highlightedId && (
+            <button
+              className="ml-2 px-2 py-1 text-xs text-gray-500 border border-gray-300 rounded hover:bg-gray-100"
+              onClick={() => {
+                setHighlightedId(null);
+                setSearchId("");
+              }}
+            >
+              Сбросить
+            </button>
+          )}
+        </div>
       </header>
       <div className="flex flex-1">
         <Sidebar
@@ -312,7 +357,11 @@ const ReviewCard = () => {
                   key={review.id}
                   className={`w-full rounded-lg p-6 border ${getSentimentColor(
                     review.sentiment
-                  )} shadow-sm hover:shadow-md transition-shadow duration-200`}
+                  )} shadow-sm hover:shadow-md transition-shadow duration-200${
+                    highlightedId === review.id
+                      ? " bg-yellow-100 !border-2 !border-yellow-400"
+                      : ""
+                  }`}
                 >
                   <div className="flex flex-col gap-4">
                     {/* Заголовок с ID, датами и оценкой */}

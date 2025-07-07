@@ -324,30 +324,61 @@ export function Dashboard() {
         </div>
         {/* Новый layout: 3 колонки, но с col-span для ширины */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-2">
-          {/* Карточка с преимуществами и улучшениями - col-span-2 */}
-          <div className="card p-0 rounded-lg shadow flex flex-row md:col-span-2 min-w-[320px] max-w-full bg-white overflow-hidden">
-            {/* Левая часть: Что можно улучшить */}
-            <div className="flex-1 min-w-[160px] p-4 flex flex-col">
-              <h3 className="text-base font-bold text-blue-700 mb-2">
-                Что можно улучшить
-              </h3>
-              <ul className="list-disc pl-4 text-xs">
-                <li>Прозрачность цен (20%)</li>
-                <li>Качество некоторых услуг (40%)</li>
-                <li>Снижение скрытых комиссий</li>
+          {/* Карточки преимуществ и улучшений - col-span-2 */}
+          <div className="md:col-span-2 flex flex-row gap-4 bg-gradient-to-r from-blue-100 via-cyan-100 to-green-100 rounded-2xl p-6">
+            {/* Наши преимущества */}
+            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[220px]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-blue-200">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#4F8EF9"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M8 12l2.5 2.5L16 9" />
+                  </svg>
+                </span>
+                <span className="font-semibold text-blue-700 text-base">
+                  наши преимущества
+                </span>
+              </div>
+              <ul className="list-none text-gray-700 text-sm w-full mt-2">
+                <li className="mb-1">Высокий рейтинг сервиса (90%)</li>
+                <li className="mb-1">Широкое разнообразие услуг (90%)</li>
+                <li>Доступность в большинстве регионов (76%)</li>
               </ul>
             </div>
-            {/* Вертикальный разделитель */}
-            <div className="w-px bg-gray-200 mx-2 hidden md:block" />
-            {/* Правая часть: Наши преимущества */}
-            <div className="flex-1 min-w-[160px] p-4 flex flex-col">
-              <h3 className="text-base font-bold text-blue-700 mb-2">
-                Наши преимущества
-              </h3>
-              <ul className="list-disc pl-4 text-xs">
-                <li>Высокий рейтинг сервиса (90%)</li>
-                <li>Широкое разнообразие услуг (90%)</li>
-                <li>Доступность в большинстве регионов (76%)</li>
+            {/* Что можно улучшить */}
+            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[220px]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-blue-200">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#4F8EF9"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M17.5 6.5l-7.8 7.8a2.5 2.5 0 003.5 3.5l6.3-6.3a4 4 0 00-5.7-5.7l-8.5 8.5a6 6 0 008.5 8.5l7.1-7.1" />
+                  </svg>
+                </span>
+                <span className="font-semibold text-blue-700 text-base">
+                  что можно улучшить
+                </span>
+              </div>
+              <ul className="list-none text-gray-700 text-sm w-full mt-2">
+                <li className="mb-1">Прозрачность цен (20%)</li>
+                <li className="mb-1">Качество некоторых услуг (40%)</li>
+                <li>Снижение скрытых комиссий</li>
               </ul>
             </div>
           </div>
@@ -522,39 +553,51 @@ export function Dashboard() {
             <table className="w-full mt-2 border-collapse text-xs items-center">
               <thead>
                 <tr>
-                  <th className="bg-blue-200 text-blue-700">Оценка</th>
-                  <th className="bg-blue-200 text-blue-700">Цена</th>
-                  <th className="bg-blue-200 text-blue-700">Качество</th>
-                  <th className="bg-blue-200 text-blue-700">Сервис</th>
-                  <th className="bg-blue-200 text-blue-700">Доступность</th>
-                  <th className="bg-blue-200 text-blue-700">Разнообразие</th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Оценка
+                  </th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Цена
+                  </th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Качество
+                  </th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Сервис
+                  </th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Доступность
+                  </th>
+                  <th className="bg-blue-200 text-blue-700 text-center">
+                    Разнообразие
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                  <tr> 
-                    <td>Конкурент 1</td>
-                    <td className="flex flex-col items-center min-h-[40px] w-full justify-center">20%</td>
-                      <td>40%</td>
-                      <td>90%</td>
-                      <td>76%</td>
-                      <td>90%</td>
-                  </tr>
-                  <tr>
-                    <td>Конкурент 2</td>
-                    <td>13%</td>
-                    <td>38%</td>
-                    <td>10%</td>
-                    <td>55%</td>
-                    <td>83%</td>
-                  </tr>
-                  <tr>
-                    <td>Конкурент 3</td>
-                    <td>90%</td>
-                    <td>34%</td>
-                    <td>90%</td>
-                    <td>76%</td>
-                    <td>97%</td>
-                  </tr>
+                <tr>
+                  <td className="text-center">Конкурент 1</td>
+                  <td className="text-center">20%</td>
+                  <td className="text-center">40%</td>
+                  <td className="text-center">90%</td>
+                  <td className="text-center">76%</td>
+                  <td className="text-center">90%</td>
+                </tr>
+                <tr>
+                  <td className="text-center">Конкурент 2</td>
+                  <td className="text-center">13%</td>
+                  <td className="text-center">38%</td>
+                  <td className="text-center">10%</td>
+                  <td className="text-center">55%</td>
+                  <td className="text-center">83%</td>
+                </tr>
+                <tr>
+                  <td className="text-center">Конкурент 3</td>
+                  <td className="text-center">90%</td>
+                  <td className="text-center">34%</td>
+                  <td className="text-center">90%</td>
+                  <td className="text-center">76%</td>
+                  <td className="text-center">97%</td>
+                </tr>
               </tbody>
             </table>
           </div>

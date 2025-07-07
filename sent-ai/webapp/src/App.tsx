@@ -14,6 +14,7 @@ import { ProcessedReviews } from "./components/Reviews/ProcessedReviews";
 import ReviewCard from "./components/Reviews/ReviewCard";
 import CompetitorAnylize from "./components/Reviews/CompetitorAnylize";
 import AIrecommendations from "./components/Reviews/AIrecommendations";
+import { CounterPage } from "./components/Reviews/Counter";
 
 function Home() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
@@ -191,6 +192,7 @@ function App() {
         <Route path="/reviews/cards" element={<ReviewCard />} />
         <Route path="/competitor-analysis" element={<CompetitorAnylize />} />
         <Route path="/ai-recommendations" element={<AIrecommendations />} />
+        <Route path="/counters" element={<CounterPage />} />
       </Routes>
     </Router>
   );
