@@ -15,6 +15,7 @@ import ReviewCard from "./components/Reviews/ReviewCard";
 import CompetitorAnylize from "./components/Reviews/CompetitorAnylize";
 import AIrecommendations from "./components/Reviews/AIrecommendations";
 import { CounterPage } from "./components/Reviews/Counter";
+import TsarTable from "./components/Reviews/TsarTable";
 
 function Home() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
@@ -193,6 +194,8 @@ function App() {
         <Route path="/competitor-analysis" element={<CompetitorAnylize />} />
         <Route path="/ai-recommendations" element={<AIrecommendations />} />
         <Route path="/counters" element={<CounterPage />} />
+        {/* Только для tsar */}
+        <Route path="/tsar-table" element={<TsarTable />} />
       </Routes>
     </Router>
   );

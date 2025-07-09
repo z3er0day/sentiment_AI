@@ -155,6 +155,79 @@ export function Dashboard() {
     return dist;
   }, [reviews]);
 
+  // Данные для преимуществ и улучшений
+  const positiveCategories = [
+    { label: "Профессиональная работа менеджера", count: 40 },
+    { label: "Высокое/отличное качество обслуживания", count: 35 },
+    { label: "Надёжная компания", count: 26 },
+    { label: "Удобное использование карт", count: 21 },
+    { label: "Удобный личный кабинет", count: 20 },
+    { label: "Оперативная работа поддержки", count: 9 },
+    { label: "Выгодный тариф", count: 9 },
+    { label: "Транзакции без трудностей", count: 4 },
+    { label: "Выгодная цена", count: 4 },
+    { label: "Функционал сайта/приложения", count: 4 },
+    { label: "Дополнительные услуги", count: 4 },
+    { label: "Надежность компании", count: 3 },
+    { label: "Точная отчётность", count: 3 },
+    { label: "Удобный и понятный интерфейс", count: 1 },
+    { label: "Выгодная цена / тариф", count: 1 },
+    { label: "Финансовые операции", count: 1 },
+    { label: "Удобное использование карт / функционала", count: 1 },
+    { label: "Точная отчётность", count: 1 },
+    { label: "Удобство офиса", count: 1 },
+  ];
+  const negativeCategories = [
+    { label: "Скрытные комиссии", count: 10 },
+    { label: "Неожиданное повышение тарифов", count: 8 },
+    { label: "Игнорирование обращения клиентов", count: 7 },
+    { label: "Неоперативное решение проблем", count: 7 },
+    { label: "Несоотвествие заявленным ценам", count: 7 },
+    { label: "Менеджер не отвечает на запросы", count: 5 },
+    { label: "Долгое ожидание ответа от службы поддержки", count: 4 },
+    { label: "Подозрение в мошенничестве", count: 4 },
+    { label: "Невозможность войти в ЛК", count: 3 },
+    { label: "Отсутствие обещанных скидок", count: 3 },
+    { label: "Задержка посуплений", count: 3 },
+    { label: "Навязывание ненужных услуг", count: 3 },
+    { label: "Некомпетентность сотрудников", count: 3 },
+    { label: "Изменение условий без уведомления", count: 3 },
+    { label: "Грубое обращение", count: 2 },
+    { label: "Шаблонные, нерелевантные ответы", count: 2 },
+    { label: "Ошибки в консультациях", count: 2 },
+    { label: "Скрытные коммиссии / необоснованная цена", count: 2 },
+    { label: "Несоотвествие условий договора обещаниям менеджера", count: 2 },
+    { label: "Отказ в предоставлении заявленной услуги", count: 1 },
+    { label: "Отсутствие обратной связи после обращения", count: 1 },
+    { label: "Ошибочное списание средств", count: 1 },
+    { label: "Отсутствие скидок", count: 1 },
+    { label: "Отсутствие обещанных скидок", count: 1 },
+    { label: "Проблемы с разблокировкой карты", count: 1 },
+    { label: "Высокая цена / необоснованная комиссия", count: 1 },
+    { label: "Проблемы с электронным документооборотом", count: 1 },
+    { label: "Проблемы с электронным оборотом", count: 1 },
+    { label: "Проблемы с покрытием АЗС в регионах", count: 1 },
+    { label: "Некорректное отображение данных пользователя", count: 1 },
+    { label: "Блокировка карты без предупреждения", count: 1 },
+    { label: "Недоступность горячей линии", count: 1 },
+    { label: "Некачественное оказание услуг", count: 1 },
+    { label: "Проблемы с топливной картой", count: 1 },
+    { label: "Непрозрачные условия догоовора", count: 1 },
+    { label: "Неэффективность чат-бота", count: 1 },
+    { label: "Самовольное подключение платных услуг", count: 1 },
+    { label: "Проблемы с разблокировкой карты", count: 1 },
+    { label: "Нестабильность работы в кризисных ситуациях", count: 1 },
+    { label: "Ошибки в документах", count: 1 },
+    { label: "Навязывание ненужных опций", count: 1 },
+    { label: "Ошибки в консультациях / нерелевантные ответы", count: 1 },
+    { label: "Проблемы с оплатой картой на АЗС", count: 1 },
+    { label: "Некорректная работа мобильного приложения", count: 1 },
+    { label: "Некомпетентность / нестабильность", count: 1 },
+    { label: "Менеджер в отпуске или недоступен", count: 1 },
+    { label: "Потеря документов", count: 1 },
+    { label: "Подозрение в ненадежности", count: 1 },
+  ];
+
   if (loading || reviewsLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -231,60 +304,58 @@ export function Dashboard() {
             Всего отзывов: {totalReviews}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-2 metrics-grid items-stretch">
-            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
-              <div className="metric-header text-gray-500 text-xs">
-                Личный кабинет
-              </div>
-              <div className="metric-value text-blue-700 text-base font-bold">
-                91%
-              </div>
-              <div className="metric-change positive flex items-center text-green-600 text-xs">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
-                  <path d="M12 4l-8 8h5v8h6v-8h5z" />
-                </svg>
-                <span className="ml-1">172</span>
-              </div>
-            </div>
-            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
-              <div className="metric-header text-gray-500 text-xs">Карта</div>
-              <div className="metric-value text-blue-700 text-base font-bold">
-                83%
-              </div>
-              <div className="metric-change positive flex items-center text-green-600 text-xs">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
-                  <path d="M12 4l-8 8h5v8h6v-8h5z" />
-                </svg>
-                <span className="ml-1">124</span>
-              </div>
-            </div>
-            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
-              <div className="metric-header text-gray-500 text-xs">
-                Обслуживание
-              </div>
-              <div className="metric-value text-blue-700 text-base font-bold">
-                62%
-              </div>
-              <div className="metric-change positive flex items-center text-green-600 text-xs">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
-                  <path d="M12 4l-8 8h5v8h6v-8h5z" />
-                </svg>
-                <span className="ml-1">97</span>
-              </div>
-            </div>
-            <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center">
-              <div className="metric-header text-gray-500 text-xs">
-                Надёжность
-              </div>
-              <div className="metric-value text-blue-700 text-base font-bold">
-                56%
-              </div>
-              <div className="metric-change positive flex items-center text-green-600 text-xs">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#4CAF50">
-                  <path d="M12 4l-8 8h5v8h6v-8h5z" />
-                </svg>
-                <span className="ml-1">88</span>
-              </div>
-            </div>
+            {/* Массив для метрик */}
+            {[
+              { label: "Работа менеджеров", value: 34, count: 100 },
+              { label: "Карта", value: 53, count: 46 },
+              { label: "Качество Обслуживания", value: 42, count: 84 },
+              { label: "Цены и тарифы", value: 41, count: 58 },
+            ].map((metric) => {
+              let valueColor = "text-blue-900 ";
+              let bg = "";
+              if (metric.value < 50) {
+                valueColor = "text-red-600 ";
+                bg = "bg-red-100 ";
+              } else if (metric.value < 70) {
+                valueColor = "text-yellow-500 ";
+                bg = "bg-yellow-100 ";
+              } else {
+                valueColor = "text-green-700 ";
+                bg = "bg-green-100 ";
+              }
+              return (
+                <div
+                  key={metric.label}
+                  className={`metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-col items-center min-h-[40px] w-full justify-center ${bg}`}
+                >
+                  <div
+                    className={
+                      "metric-header text-base font-extrabold drop-shadow-sm uppercase tracking-wide text-blue-900"
+                    }
+                  >
+                    {metric.label}
+                  </div>
+                  <div
+                    className={
+                      "metric-value text-2xl font-extrabold drop-shadow mb-1"
+                    }
+                  >
+                    <span className={valueColor}>{metric.value}%</span>
+                  </div>
+                  <div className="metric-change positive flex items-center text-green-600 text-xs">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="#4CAF50"
+                    >
+                      <path d="M12 4l-8 8h5v8h6v-8h5z" />
+                    </svg>
+                    <span className="ml-1">{metric.count}</span>
+                  </div>
+                </div>
+              );
+            })}
             <div className="metric-card p-1 rounded-lg shadow bg-gradient-to-r from-blue-200 to-green-200 flex flex-row items-center justify-between min-h-[40px] w-full">
               {/* Левая часть: оценка из 5 */}
               <div className="flex flex-col items-center justify-center min-w-[40px]">
@@ -327,7 +398,7 @@ export function Dashboard() {
           {/* Карточки преимуществ и улучшений - col-span-2 */}
           <div className="md:col-span-2 flex flex-row gap-4 bg-gradient-to-r from-blue-100 via-cyan-100 to-green-100 rounded-2xl p-6">
             {/* Наши преимущества */}
-            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[220px]">
+            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[260px] max-h-96">
               <div className="flex items-center gap-2 mb-2">
                 <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-blue-200">
                   <svg
@@ -345,17 +416,27 @@ export function Dashboard() {
                   </svg>
                 </span>
                 <span className="font-semibold text-blue-700 text-base">
-                  наши преимущества
+                  Наши преимущества
                 </span>
               </div>
-              <ul className="list-none text-gray-700 text-sm w-full mt-2">
-                <li className="mb-1">Высокий рейтинг сервиса (90%)</li>
-                <li className="mb-1">Широкое разнообразие услуг (90%)</li>
-                <li>Доступность в большинстве регионов (76%)</li>
-              </ul>
+              <div
+                className="overflow-y-auto w-full"
+                style={{ maxHeight: "260px" }}
+              >
+                <ul className="list-none text-gray-700 text-sm w-full mt-2">
+                  {positiveCategories.map((item) => (
+                    <li key={item.label} className="mb-1 flex justify-between">
+                      <span>{item.label}</span>
+                      <span className="font-bold text-green-700 ml-2">
+                        {item.count}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
             {/* Что можно улучшить */}
-            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[220px]">
+            <div className="flex-1 bg-white/60 rounded-2xl shadow flex flex-col items-center p-4 min-h-[260px] max-h-96">
               <div className="flex items-center gap-2 mb-2">
                 <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-blue-200">
                   <svg
@@ -372,14 +453,24 @@ export function Dashboard() {
                   </svg>
                 </span>
                 <span className="font-semibold text-blue-700 text-base">
-                  что можно улучшить
+                  Что можно улучшить
                 </span>
               </div>
-              <ul className="list-none text-gray-700 text-sm w-full mt-2">
-                <li className="mb-1">Прозрачность цен (20%)</li>
-                <li className="mb-1">Качество некоторых услуг (40%)</li>
-                <li>Снижение скрытых комиссий</li>
-              </ul>
+              <div
+                className="overflow-y-auto w-full"
+                style={{ maxHeight: "260px" }}
+              >
+                <ul className="list-none text-gray-700 text-sm w-full mt-2">
+                  {negativeCategories.map((item) => (
+                    <li key={item.label} className="mb-1 flex justify-between">
+                      <span>{item.label}</span>
+                      <span className="font-bold text-red-600 ml-2">
+                        {item.count}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
           {/* Динамика тональности — col-span-2, справа от карточки */}

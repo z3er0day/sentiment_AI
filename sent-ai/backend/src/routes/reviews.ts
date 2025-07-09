@@ -569,7 +569,9 @@ router.post("/ai-recommendation", authenticateToken, async (req, res) => {
     });
     res.json({ recommendation: saved.text });
   } catch (error: any) {
-    res.status(500).json({ error: error.message || "Ошибка генерации AI-рекомендации" });
+    res
+      .status(500)
+      .json({ error: error.message || "Ошибка генерации AI-рекомендации" });
   }
 });
 
@@ -591,45 +593,115 @@ router.get("/ai-recommendations", authenticateToken, async (req, res) => {
 });
 
 // Генерация рекомендации конкурентов (POST /api/reviews/competitor-recommendation)
-router.post("/competitor-recommendation", authenticateToken, async (req, res) => {
-  const { category, theme } = req.body;
-  if (!category) {
-    res.status(400).json({ error: "Не передан category" });
-    return;
-  }
-  try {
-    const text = await generateTextRecommendation(category);
-    const saved = await prisma.competitorRecommendation.upsert({
-      where: {
-        competitor_category_theme: {
-          category,
-          theme: theme || "",
+router.post(
+  "/competitor-recommendation",
+  authenticateToken,
+  async (req, res) => {
+    const { category, theme } = req.body;
+    if (!category) {
+      res.status(400).json({ error: "Не передан category" });
+      return;
+    }
+    try {
+      const text = await generateTextRecommendation(category);
+      const saved = await prisma.competitorRecommendation.upsert({
+        where: {
+          competitor_category_theme: {
+            category,
+            theme: theme || "",
+          },
         },
-      },
-      update: { text },
-      create: { category, theme, text },
-    });
-    res.json({ recommendation: saved.text });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message || "Ошибка генерации рекомендации конкурентов" });
+        update: { text },
+        create: { category, theme, text },
+      });
+      res.json({ recommendation: saved.text });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({
+          error: error.message || "Ошибка генерации рекомендации конкурентов",
+        });
+    }
   }
-});
+);
 
 // Получить рекомендации конкурентов (GET /api/reviews/competitor-recommendations)
-router.get("/competitor-recommendations", authenticateToken, async (req, res) => {
-  const { category, theme } = req.query;
-  try {
-    const where: any = {};
-    if (category) where.category = String(category);
-    if (theme !== undefined) where.theme = String(theme);
-    const recommendations = await prisma.competitorRecommendation.findMany({
-      where,
-      orderBy: { updatedAt: "desc" },
-    });
-    res.json({ recommendations });
-  } catch (error) {
-    res.status(500).json({ error: "Ошибка при получении рекомендаций конкурентов" });
+router.get(
+  "/competitor-recommendations",
+  authenticateToken,
+  async (req, res) => {
+    const { category, theme } = req.query;
+    try {
+      const where: any = {};
+      if (category) where.category = String(category);
+      if (theme !== undefined) where.theme = String(theme);
+      const recommendations = await prisma.competitorRecommendation.findMany({
+        where,
+        orderBy: { updatedAt: "desc" },
+      });
+      res.json({ recommendations });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "Ошибка при получении рекомендаций конкурентов" });
+    }
   }
-});
+);
+
+// Массовое обновление обработанных отзывов (bulk update)
+router.post(
+  "/processed/bulk-update",
+  authenticateToken,
+  isTsar,
+  async (req, res) => {
+    const { reviews } = req.body;
+    if (!Array.isArray(reviews)) {
+      res.status(400).json({ error: "reviews должен быть массивом" });
+      return;
+    }
+    try {
+      await prisma.$transaction(
+        reviews
+          .map((r) => {
+            // Обновляем ProcessedReview
+            const processedUpdate = prisma.processedReview.update({
+              where: { id: r.id },
+              data: {
+                theme: r.theme,
+                sentiment: r.sentiment,
+                category: r.category,
+                priority: r.priority,
+                competitorMention: r.competitorMention,
+                tags: Array.isArray(r.tags) ? r.tags.join(",") : null,
+              },
+            });
+            // Обновляем связанные поля в Review (если нужно)
+            const reviewUpdate = prisma.review.update({
+              where: { id: r.id },
+              data: {
+                rating: r.rating,
+                text: r.text,
+                date: r.date,
+                collectionTime: r.collectionTime,
+              },
+            });
+            return [processedUpdate, reviewUpdate];
+          })
+          .flat()
+      );
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Ошибка bulk-update:", error);
+      const err = error as any;
+      res
+        .status(500)
+        .json({
+          error: "Ошибка при массовом обновлении отзывов",
+          details: err.message,
+          stack: err.stack,
+        });
+    }
+  }
+);
 
 export default router;

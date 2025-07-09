@@ -284,7 +284,8 @@ const CompetitorAnylize: React.FC = () => {
     const isMention = (val: any) => {
       if (typeof val === "boolean") return val;
       if (typeof val === "number") return val === 1;
-      if (typeof val === "string") return ["true", "True", "TRUE", "1"].includes(val.trim());
+      if (typeof val === "string")
+        return ["true", "True", "TRUE", "1"].includes(val.trim());
       return false;
     };
     processedReviews.forEach((r) => {
@@ -637,10 +638,20 @@ const CompetitorAnylize: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {uniqueCategories.map((cat) => {
+                {uniqueCategories.map((cat, idx) => {
                   const diff = categoryDiffPercent[cat] || 0;
                   // Зеленый если обычная частота больше, красный если у конкурентов больше
-                  const diffColor = diff >= 0 ? 'text-green-600' : 'text-red-600';
+                  const diffColor =
+                    diff >= 0 ? "text-green-600" : "text-red-600";
+                  // Специальные рекомендации для первых трех тем
+                  let customRecommendation = undefined;
+                  if (idx === 0) {
+                    customRecommendation = `Условия сотрудничества: Оценивайте критерий удовлетворенности партнёров условиями сотрудничества. Регулярные опросы помогут выявить слабые места и улучшить договорные условия.`;
+                  } else if (idx === 1) {
+                    customRecommendation = `Персонал: Оцените критерий профессиональных навыков вашей команды. Регулярное проведение оценочных мероприятий поможет выявить сильные и слабые стороны сотрудников, что позволит нацелиться на обучение конкретным навыкам.`;
+                  } else if (idx === 2) {
+                    customRecommendation = `Надёжность компании: Сосредоточьтесь на критере отзывов и рейтингов. Поддерживайте положительную репутацию, активно отвечая на отзывы и достойно решая возникающие проблемы.`;
+                  }
                   return (
                     <tr key={cat}>
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
@@ -652,11 +663,16 @@ const CompetitorAnylize: React.FC = () => {
                       <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-center">
                         {competitorFrequencies[cat] || 0}
                       </td>
-                      <td className={`px-4 py-2 whitespace-nowrap text-sm font-semibold text-center ${diffColor}`}>
-                        {diff >= 0 ? '+' : ''}{diff.toFixed(1)}%
+                      <td
+                        className={`px-4 py-2 whitespace-nowrap text-sm font-semibold text-center ${diffColor}`}
+                      >
+                        {diff >= 0 ? "+" : ""}
+                        {diff.toFixed(1)}%
                       </td>
-                      <td className="px-4 py-2 whitespace-pre-line text-sm text-gray italic text-gray-400">
-                        {recommendations[cat] || "(рекомендация появится здесь)"}
+                      <td className="px-4 py-2 whitespace-pre-line text-sm text-gray italic text-black">
+                        {customRecommendation ||
+                          recommendations[cat] ||
+                          "(рекомендация появится здесь)"}
                       </td>
                     </tr>
                   );

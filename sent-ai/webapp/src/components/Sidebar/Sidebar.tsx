@@ -125,7 +125,20 @@ export function Sidebar({ isOpen, onClose, user }: SidebarProps) {
                 Обработанные отзывы
               </Link>
             )}
-
+            {/* Tsar Table - visible only to tsar */}
+            {user?.role === "tsar" && (
+              <Link
+                to="/tsar-table"
+                className={`block py-2 px-4 rounded-lg mb-2 ${
+                  location.pathname === "/tsar-table"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-600 hover:bg-blue-50"
+                }`}
+                onClick={onClose}
+              >
+                Большая таблица (tsar)
+              </Link>
+            )}
             {/* Counter Page - visible to all users */}
             <Link
               to="/counters"

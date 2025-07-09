@@ -307,40 +307,6 @@ const ReviewCard = () => {
           </button>
           <h1 className="text-2xl font-bold text-blue-700">Все отзывы</h1>
         </div>
-        {/* Поиск по ID */}
-        <div className="flex items-center gap-2 ml-4">
-          <input
-            type="number"
-            min="1"
-            placeholder="Поиск по ID отзыва..."
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200"
-            style={{ width: 180 }}
-          />
-          <button
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-            onClick={() => {
-              const id = Number(searchId);
-              if (!id) return setHighlightedId(null);
-              const found = reviews.find((r) => r.id === id);
-              setHighlightedId(found ? id : null);
-            }}
-          >
-            Найти
-          </button>
-          {highlightedId && (
-            <button
-              className="ml-2 px-2 py-1 text-xs text-gray-500 border border-gray-300 rounded hover:bg-gray-100"
-              onClick={() => {
-                setHighlightedId(null);
-                setSearchId("");
-              }}
-            >
-              Сбросить
-            </button>
-          )}
-        </div>
       </header>
       <div className="flex flex-1">
         <Sidebar
@@ -351,6 +317,42 @@ const ReviewCard = () => {
         {/* Основной контент */}
         <div className="flex-1">
           <div className="container mx-auto px-4 py-8">
+            {/* Поиск по ID вынесен в отдельный блок и сдвинут правее */}
+            <div className="flex justify-center">
+              <div className="flex items-center gap-2 mb-6 w-full max-w-4xl">
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="Поиск по ID отзыва..."
+                  value={searchId}
+                  onChange={(e) => setSearchId(e.target.value)}
+                  className="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                  style={{ width: 180 }}
+                />
+                <button
+                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onClick={() => {
+                    const id = Number(searchId);
+                    if (!id) return setHighlightedId(null);
+                    const found = reviews.find((r) => r.id === id);
+                    setHighlightedId(found ? id : null);
+                  }}
+                >
+                  Найти
+                </button>
+                {highlightedId && (
+                  <button
+                    className="ml-2 px-2 py-1 text-xs text-gray-500 border border-gray-300 rounded hover:bg-gray-100"
+                    onClick={() => {
+                      setHighlightedId(null);
+                      setSearchId("");
+                    }}
+                  >
+                    Сбросить
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="flex flex-col gap-6 max-w-4xl mx-auto">
               {filteredReviews.map((review) => (
                 <div
